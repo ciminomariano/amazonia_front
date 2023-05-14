@@ -7,6 +7,7 @@ function Form() {
   const [destination, setDestination] = useState('');
   const [result, setResult] = useState('');
   const [trips, setTrips] = useState([]);
+  const [isCalculating, setIsCalculating] = useState(false); // New state variable
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,16 +18,18 @@ function Form() {
       return;
     }
 
+    setIsCalculating(true); // Set isCalculating to true before sending the request
+
     const response = await fetch('https://amazoniaback.herokuapp.com/deliveries', {
-    method: 'POST',
-    headers: {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 
-        start: start.toUpperCase(), 
-        pickup: pickup.toUpperCase(), 
-        destination: destination.toUpperCase() 
-    })
+      },
+      body: JSON.stringify({
+        start: start.toUpperCase(),
+        pickup: pickup.toUpperCase(),
+        destination: destination.toUpperCase()
+      })
     });
 
     const data = await response.json();
@@ -34,6 +37,7 @@ function Form() {
 
     // Update state with the response
     setResult({ route: data.route, time: data.time });
+    setIsCalculating(false); // Set isCalculating to false after receiving the response
   };
 
   const handleGetLastTrips = async (e) => {
@@ -64,7 +68,9 @@ function Form() {
         </div>
 
         <div className="buttons-container">
-          <button type="submit">Calculate Route</button>
+          <button type="submit" disabled={isCalculating}>
+            {isCalculating ? 'Calculating Route...' : 'Calculate Route'}
+          </button>
           <button onClick={handleGetLastTrips}>Get Last 10 Trips</button>
         </div>
       </form>
