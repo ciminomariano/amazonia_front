@@ -11,19 +11,24 @@ function Form() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validValuesRegex = /^[A-H][1-8]$/;
+    const validValuesRegex = /^[A-Ha-h][1-8]$/i;
     if (!validValuesRegex.test(start) || !validValuesRegex.test(pickup) || !validValuesRegex.test(destination)) {
       alert('Please enter valid values (A1 to F8) in the fields.');
       return;
     }
 
     const response = await fetch('https://amazoniaback.herokuapp.com/deliveries', {
-      method: 'POST',
-      headers: {
+    method: 'POST',
+    headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ start, pickup, destination })
+    },
+    body: JSON.stringify({ 
+        start: start.toUpperCase(), 
+        pickup: pickup.toUpperCase(), 
+        destination: destination.toUpperCase() 
+    })
     });
+
     const data = await response.json();
     console.log(data);
 
